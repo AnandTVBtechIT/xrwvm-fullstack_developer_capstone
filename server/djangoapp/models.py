@@ -6,7 +6,27 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 # Create your models here.
+# Dealership model
+class Dealership(models.Model):
+    name = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=2)
+    address = models.CharField(max_length=200, blank=True)
+    zip_code = models.CharField(max_length=10, blank=True)
 
+    def __str__(self):
+        return f"{self.name} ({self.city}, {self.state})"
+
+# Review model
+class Review(models.Model):
+    dealership = models.ForeignKey(Dealership, on_delete=models.CASCADE, related_name='reviews')
+    reviewer_name = models.CharField(max_length=100)
+    review = models.TextField()
+    sentiment = models.CharField(max_length=20, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.reviewer_name} - {self.dealership.name}"
 # <HINT> Create a Car Make model `class CarMake(models.Model)`:
 # - Name
 # - Description
@@ -40,8 +60,8 @@ class CarModel(models.Model):
         ('TESLA', 'Tesla'),
         # Add more choices as required
     ]
-    name = models.CharField(max_length=100)
-    car_make = models.ForeignKey(CarMake, on_delete=models.CASCADE)
+    
+    
     type = models.CharField(max_length=10, choices=CAR_TYPES, default='SUV')
     year = models.IntegerField(default=2023,
         validators=[
